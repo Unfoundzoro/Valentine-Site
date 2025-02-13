@@ -5,15 +5,167 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Will You Be My Valentine?</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+        body {
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            font-family: 'Pacifico', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+            max-width: 90%;
+            transition: transform 0.3s ease-in-out;
+        }
+        .container:hover {
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        h1 {
+            color: red;
+            font-size: 28px;
+        }
+        .buttons button {
+            font-size: 20px;
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .buttons button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #yes-btn {
+            background-color: red;
+            color: white;
+            box-shadow: 0 0 10px red;
+        }
+        #no-btn {
+            background-color: white;
+            color: red;
+            border: 2px solid red;
+        }
+        #no-btn:hover {
+            animation: shake 0.5s infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .gif-container {
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite;
+            max-width: 100%;
+        }
+        .gif-container img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .heart {
+            position: fixed;
+            bottom: -10px;
+            font-size: 24px;
+            color: red;
+            animation: rise 5s linear infinite;
+        }
+        @keyframes rise {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-100vh); opacity: 0; }
+        }
+    </style>
 </head>
 <body>
+    <audio id="bg-music" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <button onclick="toggleMusic()" style="position: absolute; top: 10px; right: 10px; background: white; border: 2px solid red; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🎶</button>
+    <div class="gif-container" id="gif-container">
+        <img id="gif" src="https://media.tenor.com/2csFlkJ3TyAAAAAj/tkthao219-bubududu.gif" alt="Love GIF">
+    </div>
     <div class="container">
-        <h1>Will You Be My Valentine? 💖</h1>
+        <h1 id="message">Will You Be My Valentine? 💖</h1>
         <div class="buttons">
-            <button id="yes-btn">Yes</button>
-            <button id="no-btn">No</button>
+            <button id="yes-btn" onclick="showYesGif()">Yes</button>
+            <button id="no-btn" onclick="showNoGif()">No</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+let yesMessages = ["Yay! 💖", "My Baby Girl", "OMO to Rewa", "You're the sweetest! 😍"];
+let noMessages = ["omoooooooo", "Remmiiiii", "You no go reconsider", "Whala"];
+let yesIndex = 0;
+let noIndex = 0;
+let noClickCount = 0;
+
+
+function showYesGif() {
+    document.getElementById('gif').src = "https://media.tenor.com/Ka7sVbRXQUwAAAAj/tkthao219-bubududu.gif";
+    document.getElementById('message').innerText = yesMessages[yesIndex];
+    yesIndex = (yesIndex + 1) % yesMessages.length;
+    startConfetti();
+    createHearts();
+}
+function showNoGif() {
+    document.getElementById('gif').src = "https://media.tenor.com/RJgIui1E_2QAAAAj/teddy-bear.gif";
+    document.getElementById('message').innerText = noMessages[noIndex];
+    noIndex = (noIndex + 1) % noMessages.length;
+    noClickCount++;
+    if (noClickCount < 5) {
+        document.getElementById('no-btn').style.transform = `scale(${1 - noClickCount * 0.2})`;
+        document.getElementById('message').innerText = noMessages[noIndex];
+    } else {
+        document.getElementById('no-btn').style.display = 'none';
+        document.getElementById('message').innerText = "Oya click the right one";
+    }
+}
+function toggleMusic() {
+    var music = document.getElementById('bg-music');
+    if (music.paused) {
+        music.play();
+    } else {
+        music.pause();
+    }
+}
+function startConfetti() {
+    confetti.start();
+    setTimeout(() => confetti.stop(), 3000);
+}
+function createHearts() {
+    for (let i = 0; i < 30; i++) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+        heart.innerHTML = "❤️";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+    }
+}
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.3.2/dist/confetti.browser.min.js"></script>
 </body>
 </html>
